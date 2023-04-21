@@ -65,8 +65,11 @@
             }
 
             const opacity = transparentPixels / totalPixels;
-            baseLayerCanvas.style.opacity = 1 - opacity;
+            if (opacity > parseFloat(baseLayerCanvas.style.opacity)) {
+                baseLayerCanvas.style.opacity = opacity;
+            }
         }
+
 
         function scratch(x, y) {
             scratchCtx.beginPath();

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive NFT</title>
+    <style>
+        #container {
+            position: relative;
+            display: inline-block;
+        }
+        img {
+            display: block;
+            max-width: 100%;
+        }
+        #top-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 1;
+            transition: opacity 0.5s;
+        }
+        #container:hover #top-layer {
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <img src="testNFTlayer2.png" alt="Base Layer">
+        <img src="testNFTlayer1.png" id="top-layer" alt="Top Layer">
+    </div>
+</body>
+</html>

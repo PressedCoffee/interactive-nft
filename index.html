@@ -1,124 +1,83 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive NFT</title>
-    <style>
-        #container {
-            position: relative;
-            display: inline-block;
+const container = document.getElementById('container');
+const baseLayerCanvas = document.getElementById('base-layer-canvas');
+const baseLayerCtx = baseLayerCanvas.getContext('2d');
+const scratchCanvas = document.getElementById('scratch-canvas');
+const scratchCtx = scratchCanvas.getContext('2d');
+
+let isDrawing = false;
+const scaleFactor = 0.5;
+
+const baseLayer = new Image();
+baseLayer.src = 'base-layer.jpg';
+baseLayer.onload = () => {
+    baseLayerCanvas.width = baseLayer.width * scaleFactor;
+    baseLayerCanvas.height = baseLayer.height * scaleFactor;
+    baseLayerCtx.globalAlpha = 0; // Add this line
+
+    const topLayer = new Image();
+    topLayer.src = 'top-layer.jpg';
+    topLayer.onload = () => {
+        scratchCanvas.width = topLayer.width * scaleFactor;
+        scratchCanvas.height = topLayer.height * scaleFactor;
+        scratchCtx.drawImage(topLayer, 0, 0, scratchCanvas.width, scratchCanvas.height);
+        scratchCtx.globalCompositeOperation = 'destination-out';
+    };
+};
+
+function updateAlpha() {
+    const totalPixels = scratchCanvas.width * scratchCanvas.height;
+    const imageData = scratchCtx.getImageData(0, 0, scratchCanvas.width, scratchCanvas.height);
+    const pixels = imageData.data;
+    let transparentPixels = 0;
+
+    for (let i = 0; i < pixels.length; i += 4) {
+        if (pixels[i + 3] === 0) {
+            transparentPixels++;
         }
-        canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-        #base-layer-canvas {
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-    </style>
-</head>
-<body>
-    <div id="container">
-        <canvas id="base-layer-canvas"></canvas>
-        <canvas id="scratch-canvas"></canvas>
-    </div>
-    <script>
-        const container = document.getElementById('container');
-        const baseLayerCanvas = document.getElementById('base-layer-canvas');
-        const baseLayerCtx = baseLayerCanvas.getContext('2d');
-        const scratchCanvas = document.getElementById('scratch-canvas');
-        const scratchCtx = scratchCanvas.getContext('2d');
+    }
 
-        let isDrawing = false;
-        const scaleFactor = 0.5:
-        let currentOpacity = 0;
+    const alpha = transparentPixels / totalPixels;
+    baseLayerCtx.globalAlpha = alpha;
+    baseLayerCtx.clearRect(0, 0, baseLayerCanvas.width, baseLayerCanvas.height);
+    baseLayerCtx.drawImage(baseLayer, 0, 0, baseLayerCanvas.width, baseLayerCanvas.height);
+}
 
+function scratch(x, y) {
+    scratchCtx.beginPath();
+    scratchCtx.arc(x, y, 30, 0, Math.PI * 2);
+    scratchCtx.fill();
+    updateAlpha();
+}
 
-        const baseLayer = new Image();
-        baseLayer.src = 'testNFTlayer2.png';
-        baseLayer.onload = () => {
-            baseLayerCanvas.width = baseLayer.width * scaleFactor;
-            baseLayerCanvas.height = baseLayer.height * scaleFactor;
-            baseLayerCtx.drawImage(baseLayer, 0, 0, baseLayerCanvas.width, baseLayerCanvas.height);
+scratchCanvas.addEventListener('mousedown', () => {
+    isDrawing = true;
+});
 
-            const topLayer = new Image();
-            topLayer.src = 'testNFTlayer1.png';
-            topLayer.onload = () => {
-               scratchCanvas.width = topLayer.width * scaleFactor;
-               scratchCanvas.height = topLayer.height * scaleFactor;
-               scratchCtx.drawImage(topLayer, 0, 0, scratchCanvas.width, scratchCanvas.height);
-               scratchCtx.globalCompositeOperation = 'destination-out';
-               baseLayerCanvas.style.opacity = 0; // Add this line
-            };
+scratchCanvas.addEventListener('mouseup', () => {
+    isDrawing = false;
+});
 
-        };
+scratchCanvas.addEventListener('mousemove', (e) => {
+    if (!isDrawing) return;
+    const rect = scratchCanvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    scratch(x, y);
+});
 
-        function updateOpacity() {
-            const totalPixels = scratchCanvas.width * scratchCanvas.height;
-            const imageData = scratchCtx.getImageData(0, 0, scratchCanvas.width, scratchCanvas.height);
-            const pixels = imageData.data;
-            let transparentPixels = 0;
+scratchCanvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    isDrawing = true;
+});
 
-            for (let i = 0; i < pixels.length; i += 4) {
-                if (pixels[i + 3] === 0) {
-                    transparentPixels++;
-                }
-            }
+scratchCanvas.addEventListener('touchend', () => {
+    isDrawing = false;
+});
 
-            const opacity = transparentPixels / totalPixels;
-            if (opacity > currentOpacity) {
-                baseLayerCanvas.style.opacity = opacity;
-                currentOpacity = opacity; // Add this line
-            }
-        }
-
-
-
-        function scratch(x, y) {
-            scratchCtx.beginPath();
-            scratchCtx.arc(x, y, 30, 0, Math.PI * 2);
-            scratchCtx.fill();
-            updateOpacity();
-        }
-
-        scratchCanvas.addEventListener('mousedown', () => {
-            isDrawing = true;
-        });
-
-        scratchCanvas.addEventListener('mouseup', () => {
-            isDrawing = false;
-        });
-
-        scratchCanvas.addEventListener('mousemove', (e) => {
-            if (!isDrawing) return;
-            const rect = scratchCanvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            scratch(x, y);
-        });
-
-        scratchCanvas.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            isDrawing = true;
-        });
-
-        scratchCanvas.addEventListener('touchend', () => {
-            isDrawing = false;
-        });
-
-        scratchCanvas.addEventListener('touchmove', (e) => {
-            if (!isDrawing) return;
-            const rect = scratchCanvas.getBoundingClientRect();
-            const x = e.touches[0].clientX - rect.left;
-            const y = e.touches[0].clientY - rect.top;
-            scratch(x, y);
-        });
-        
-</script>
-</body>
-</html>
-
-
+scratchCanvas.addEventListener('touchmove', (e) => {
+    if (!isDrawing) return;
+    const rect = scratchCanvas.getBoundingClientRect();
+    const x = e.touches[0].clientX - rect.left;
+    const y = e.touches[0].clientY - rect.top;
+    scratch(x, y);
+});

@@ -33,31 +33,23 @@
         const scratchCtx = scratchCanvas.getContext('2d');
 
         let isDrawing = false;
-        const scaleFactor = 0.5;
 
         const baseLayer = new Image();
-        baseLayer.src = 'testNFTlayer2.png';
+        baseLayer.src = 'base-layer.jpg';
         baseLayer.onload = () => {
-            baseLayerCanvas.width = baseLayer.width * scaleFactor;
-            baseLayerCanvas.height = baseLayer.height * scaleFactor;
-        };
+            baseLayerCanvas.width = baseLayer.width;
+            baseLayerCanvas.height = baseLayer.height;
+            baseLayerCtx.drawImage(baseLayer, 0, 0, baseLayerCanvas.width, baseLayerCanvas.height);
 
-        const topLayer = new Image();
-        topLayer.src = 'testNFTlayer1.png';
-        topLayer.onload = () => {
-            scratchCanvas.width = topLayer.width * scaleFactor;
-            scratchCanvas.height = topLayer.height * scaleFactor;
-            scratchCtx.drawImage(topLayer, 0, 0, scratchCanvas.width, scratchCanvas.height);
-            scratchCtx.globalCompositeOperation = 'destination-out';
-            baseLayerCanvas.style.opacity = 0;
-            baseLayerCtx.drawImage(baseLayer, 0, 0, baseLayerCanvas.width, baseLayerCanvas.height); // Move this line here
-        };
-
-        function drawBaseLayer() {
-            baseLayer.onload = () => {
-                baseLayerCtx.drawImage(baseLayer, 0, 0, baseLayerCanvas.width, baseLayerCanvas.height);
+            const topLayer = new Image();
+            topLayer.src = 'top-layer.jpg';
+            topLayer.onload = () => {
+                scratchCanvas.width = topLayer.width;
+                scratchCanvas.height = topLayer.height;
+                scratchCtx.drawImage(topLayer, 0, 0, scratchCanvas.width, scratchCanvas.height);
+                scratchCtx.globalCompositeOperation = 'destination-out';
             };
-        }
+        };
 
         function updateOpacity() {
             const totalPixels = scratchCanvas.width * scratchCanvas.height;
@@ -72,7 +64,7 @@
             }
 
             const opacity = transparentPixels / totalPixels;
-            baseLayerCanvas.style.opacity = opacity;
+            baseLayerCanvas.style.opacity = 1 - opacity;
         }
 
         function scratch(x, y) {
@@ -114,8 +106,7 @@
             const y = e.touches[0].clientY - rect.top;
             scratch(x, y);
         });
-
+        
 </script>
-
 </body>
 </html>

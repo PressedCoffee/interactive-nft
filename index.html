@@ -41,9 +41,8 @@
             topLayer.src = 'testNFTlayer1.png';
             topLayer.onload = () => {
                 ctx.drawImage(topLayer, 0, 0, scratchCanvas.width, scratchCanvas.height);
+                ctx.globalCompositeOperation = 'destination-out';
             };
-
-            ctx.globalCompositeOperation = 'destination-out';
         };
 
         scratchCanvas.addEventListener('mousedown', () => {
@@ -85,4 +84,5 @@
     </script>
 </body>
 </html>
+
 

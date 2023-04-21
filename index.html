@@ -33,7 +33,9 @@
         const scratchCtx = scratchCanvas.getContext('2d');
 
         let isDrawing = false;
-        const scaleFactor = 0.5;
+        const scaleFactor = 0.5:
+        let currentOpacity = 0;
+
 
         const baseLayer = new Image();
         baseLayer.src = 'testNFTlayer2.png';
@@ -65,10 +67,12 @@
             }
 
             const opacity = transparentPixels / totalPixels;
-            if (opacity > parseFloat(baseLayerCanvas.style.opacity)) {
+            if (opacity > currentOpacity) {
                 baseLayerCanvas.style.opacity = opacity;
+                currentOpacity = opacity; // Add this line
             }
         }
+
 
 
         function scratch(x, y) {
@@ -114,6 +118,5 @@
 </script>
 </body>
 </html>
-```
 
 

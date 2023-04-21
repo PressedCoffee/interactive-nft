@@ -16,7 +16,7 @@
         }
         #base-layer-canvas {
             opacity: 0;
-            transition: opacity 1s;
+            transition: opacity 0.3s;
         }
     </style>
 </head>
@@ -35,14 +35,14 @@
         let isDrawing = false;
 
         const baseLayer = new Image();
-        baseLayer.src = 'testNFTlayer2.png';
+        baseLayer.src = 'base-layer.jpg';
         baseLayer.onload = () => {
             baseLayerCanvas.width = baseLayer.width;
             baseLayerCanvas.height = baseLayer.height;
             baseLayerCtx.drawImage(baseLayer, 0, 0, baseLayerCanvas.width, baseLayerCanvas.height);
 
             const topLayer = new Image();
-            topLayer.src = 'testNFTlayer1.png';
+            topLayer.src = 'top-layer.jpg';
             topLayer.onload = () => {
                 scratchCanvas.width = topLayer.width;
                 scratchCanvas.height = topLayer.height;
@@ -67,13 +67,19 @@
             baseLayerCanvas.style.opacity = 1 - opacity;
         }
 
+        function scratch(x, y) {
+            scratchCtx.beginPath();
+            scratchCtx.arc(x, y, 30, 0, Math.PI * 2);
+            scratchCtx.fill();
+            updateOpacity();
+        }
+
         scratchCanvas.addEventListener('mousedown', () => {
             isDrawing = true;
         });
 
         scratchCanvas.addEventListener('mouseup', () => {
             isDrawing = false;
-            updateOpacity();
         });
 
         scratchCanvas.addEventListener('mousemove', (e) => {
@@ -81,9 +87,7 @@
             const rect = scratchCanvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-            scratchCtx.beginPath();
-            scratchCtx.arc(x, y, 30, 0, Math.PI * 2);
-            scratchCtx.fill();
+            scratch(x, y);
         });
 
         scratchCanvas.addEventListener('touchstart', (e) => {
@@ -93,7 +97,6 @@
 
         scratchCanvas.addEventListener('touchend', () => {
             isDrawing = false;
-            updateOpacity();
         });
 
         scratchCanvas.addEventListener('touchmove', (e) => {
@@ -101,41 +104,12 @@
             const rect = scratchCanvas.getBoundingClientRect();
             const x = e.touches[0].clientX - rect.left;
             const y = e.touches[0].clientY - rect.top;
-            scratchCtx.beginPath();
-            scratchCtx.arc(x, y, 30, 0, Math.PI * 2);
-            scratchCtx.fill();
+            scratch(x, y);
         });
-
-// Function to gradually reveal the base layer
-function revealBaseLayer() {
-let currentOpacity = parseFloat(baseLayerCanvas.style.opacity);
-let newOpacity = currentOpacity + 0.1;
-       
-if (newOpacity > 1) {
-    newOpacity = 1;
-}
-
-baseLayerCanvas.style.opacity = newOpacity;
-
-if (newOpacity < 1) {
-    setTimeout(revealBaseLayer, 100);
-}
-
-}
-
-scratchCanvas.addEventListener('mouseup', () => {
-isDrawing = false;
-updateOpacity();
-revealBaseLayer();
-});
-
-scratchCanvas.addEventListener('touchend', () => {
-isDrawing = false;
-updateOpacity();
-revealBaseLayer();
-});
+        
 </script>
-
 </body>
 </html>
+```
+
 

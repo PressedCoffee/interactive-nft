@@ -35,14 +35,14 @@
         let isDrawing = false;
 
         const baseLayer = new Image();
-        baseLayer.src = 'base-layer.jpg';
+        baseLayer.src = 'testNFTlayer2.png';
         baseLayer.onload = () => {
             baseLayerCanvas.width = baseLayer.width;
             baseLayerCanvas.height = baseLayer.height;
             baseLayerCtx.drawImage(baseLayer, 0, 0, baseLayerCanvas.width, baseLayerCanvas.height);
 
             const topLayer = new Image();
-            topLayer.src = 'top-layer.jpg';
+            topLayer.src = 'testNFTlayer1.png';
             topLayer.onload = () => {
                 scratchCanvas.width = topLayer.width;
                 scratchCanvas.height = topLayer.height;

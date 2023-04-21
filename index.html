@@ -36,23 +36,28 @@
         const scaleFactor = 0.5;
 
         const baseLayer = new Image();
-        baseLayer.src = 'testNFTlayer2.png';
-        baseLayer.onload = () => {
+        baseLayer.src = 'base-layer.jpg';
+
+        const topLayer = new Image();
+        topLayer.src = 'top-layer.jpg';
+        topLayer.onload = () => {
             baseLayerCanvas.width = baseLayer.width * scaleFactor;
             baseLayerCanvas.height = baseLayer.height * scaleFactor;
-            baseLayerCtx.globalAlpha = 0; // Add this line
-
-            const topLayer = new Image();
-            topLayer.src = 'testNFTlayer1.png';
-            topLayer.onload = () => {
-                scratchCanvas.width = topLayer.width * scaleFactor;
-                scratchCanvas.height = topLayer.height * scaleFactor;
-                scratchCtx.drawImage(topLayer, 0, 0, scratchCanvas.width, scratchCanvas.height);
-                scratchCtx.globalCompositeOperation = 'destination-out';
-            };
+            scratchCanvas.width = topLayer.width * scaleFactor;
+            scratchCanvas.height = topLayer.height * scaleFactor;
+            scratchCtx.drawImage(topLayer, 0, 0, scratchCanvas.width, scratchCanvas.height);
+            scratchCtx.globalCompositeOperation = 'destination-out';
+            baseLayerCanvas.style.opacity = 0;
+            drawBaseLayer(); // Add this line
         };
 
-        function updateAlpha() {
+        function drawBaseLayer() {
+            baseLayer.onload = () => {
+                baseLayerCtx.drawImage(baseLayer, 0, 0, baseLayerCanvas.width, baseLayerCanvas.height);
+            };
+        }
+
+        function updateOpacity() {
             const totalPixels = scratchCanvas.width * scratchCanvas.height;
             const imageData = scratchCtx.getImageData(0, 0, scratchCanvas.width, scratchCanvas.height);
             const pixels = imageData.data;
@@ -64,17 +69,15 @@
                 }
             }
 
-            const alpha = transparentPixels / totalPixels;
-            baseLayerCtx.globalAlpha = alpha;
-            baseLayerCtx.clearRect(0, 0, baseLayerCanvas.width, baseLayerCanvas.height);
-            baseLayerCtx.drawImage(baseLayer, 0, 0, baseLayerCanvas.width, baseLayerCanvas.height);
+            const opacity = transparentPixels / totalPixels;
+            baseLayerCanvas.style.opacity = opacity;
         }
 
         function scratch(x, y) {
             scratchCtx.beginPath();
             scratchCtx.arc(x, y, 30, 0, Math.PI * 2);
             scratchCtx.fill();
-            updateAlpha();
+            updateOpacity();
         }
 
         scratchCanvas.addEventListener('mousedown', () => {
@@ -109,6 +112,7 @@
             const y = e.touches[0].clientY - rect.top;
             scratch(x, y);
         });
+
 </script>
 
 </body>

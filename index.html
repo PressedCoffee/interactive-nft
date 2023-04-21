@@ -33,19 +33,20 @@
         const scratchCtx = scratchCanvas.getContext('2d');
 
         let isDrawing = false;
+        const scaleFactor = 0.5;
 
         const baseLayer = new Image();
-        baseLayer.src = 'base-layer.jpg';
+        baseLayer.src = 'testNFTlayer2.png';
         baseLayer.onload = () => {
-            baseLayerCanvas.width = baseLayer.width;
-            baseLayerCanvas.height = baseLayer.height;
+            baseLayerCanvas.width = baseLayer.width * scaleFactor;
+            baseLayerCanvas.height = baseLayer.height * scaleFactor;
             baseLayerCtx.drawImage(baseLayer, 0, 0, baseLayerCanvas.width, baseLayerCanvas.height);
 
             const topLayer = new Image();
-            topLayer.src = 'top-layer.jpg';
+            topLayer.src = 'testNFTlayer1.png';
             topLayer.onload = () => {
-                scratchCanvas.width = topLayer.width;
-                scratchCanvas.height = topLayer.height;
+                scratchCanvas.width = topLayer.width * scaleFactor;
+                scratchCanvas.height = topLayer.height * scaleFactor;
                 scratchCtx.drawImage(topLayer, 0, 0, scratchCanvas.width, scratchCanvas.height);
                 scratchCtx.globalCompositeOperation = 'destination-out';
             };

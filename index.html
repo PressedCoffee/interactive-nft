@@ -47,11 +47,13 @@
             const topLayer = new Image();
             topLayer.src = 'testNFTlayer1.png';
             topLayer.onload = () => {
-                scratchCanvas.width = topLayer.width * scaleFactor;
-                scratchCanvas.height = topLayer.height * scaleFactor;
-                scratchCtx.drawImage(topLayer, 0, 0, scratchCanvas.width, scratchCanvas.height);
-                scratchCtx.globalCompositeOperation = 'destination-out';
+               scratchCanvas.width = topLayer.width * scaleFactor;
+               scratchCanvas.height = topLayer.height * scaleFactor;
+               scratchCtx.drawImage(topLayer, 0, 0, scratchCanvas.width, scratchCanvas.height);
+               scratchCtx.globalCompositeOperation = 'destination-out';
+               baseLayerCanvas.style.opacity = 0; // Add this line
             };
+
         };
 
         function updateOpacity() {

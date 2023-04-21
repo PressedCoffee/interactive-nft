@@ -10,7 +10,7 @@
             display: inline-block;
         }
         img {
-            display: block;
+            display: none;
             max-width: 100%;
         }
         canvas {
@@ -22,7 +22,7 @@
 </head>
 <body>
     <div id="container">
-        <img src="testNFTlayer2.png" alt="Base Layer" id="base-layer">
+        <img src="testNFTlayer1.png" alt="Base Layer" id="base-layer">
         <canvas id="scratch-canvas"></canvas>
     </div>
     <script>
@@ -38,10 +38,11 @@
             scratchCanvas.height = baseLayer.clientHeight;
 
             const topLayer = new Image();
-            topLayer.src = 'testNFTlayer1.png';
+            topLayer.src = 'testNFTlayer2.png';
             topLayer.onload = () => {
                 ctx.drawImage(topLayer, 0, 0, scratchCanvas.width, scratchCanvas.height);
                 ctx.globalCompositeOperation = 'destination-out';
+                baseLayer.style.display = 'block';
             };
         };
 

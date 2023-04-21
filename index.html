@@ -13,47 +13,68 @@
             display: block;
             max-width: 100%;
         }
-        #top-layer {
+        canvas {
             position: absolute;
             top: 0;
             left: 0;
-        }
-        #mask {
-            position: absolute;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-            mix-blend-mode: multiply;
         }
     </style>
 </head>
 <body>
     <div id="container">
-        <img src="testNFTlayer2.png" alt="Base Layer">
-        <img src="testNFTlayer1.png" id="top-layer" alt="Top Layer">
-        <svg id="mask" width="100%" height="100%">
-            <circle id="mask-circle" cx="0" cy="0" r="50" fill="white"/>
-        </svg>
+        <img src="base-layer.jpg" alt="Base Layer" id="base-layer">
+        <canvas id="scratch-canvas"></canvas>
     </div>
     <script>
+        const baseLayer = document.getElementById('base-layer');
         const container = document.getElementById('container');
-        const mask = document.getElementById('mask-circle');
+        const scratchCanvas = document.getElementById('scratch-canvas');
+        const ctx = scratchCanvas.getContext('2d');
 
-        container.addEventListener('mousemove', (e) => {
-            const rect = container.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            mask.setAttribute('cx', x);
-            mask.setAttribute('cy', y);
+        let isDrawing = false;
+
+        baseLayer.onload = () => {
+            scratchCanvas.width = baseLayer.clientWidth;
+            scratchCanvas.height = baseLayer.clientHeight;
+            ctx.drawImage(baseLayer, 0, 0, scratchCanvas.width, scratchCanvas.height);
+            ctx.globalCompositeOperation = 'destination-out';
+        };
+
+        scratchCanvas.addEventListener('mousedown', () => {
+            isDrawing = true;
         });
 
-        container.addEventListener('touchmove', (e) => {
+        scratchCanvas.addEventListener('mouseup', () => {
+            isDrawing = false;
+        });
+
+        scratchCanvas.addEventListener('mousemove', (e) => {
+            if (!isDrawing) return;
+            const rect = scratchCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            ctx.beginPath();
+            ctx.arc(x, y, 30, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        scratchCanvas.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            const rect = container.getBoundingClientRect();
+            isDrawing = true;
+        });
+
+        scratchCanvas.addEventListener('touchend', () => {
+            isDrawing = false;
+        });
+
+        scratchCanvas.addEventListener('touchmove', (e) => {
+            if (!isDrawing) return;
+            const rect = scratchCanvas.getBoundingClientRect();
             const x = e.touches[0].clientX - rect.left;
             const y = e.touches[0].clientY - rect.top;
-            mask.setAttribute('cx', x);
-            mask.setAttribute('cy', y);
+            ctx.beginPath();
+            ctx.arc(x, y, 30, 0, Math.PI * 2);
+            ctx.fill();
         });
     </script>
 </body>

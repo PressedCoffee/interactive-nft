@@ -36,24 +36,32 @@
         const scaleFactor = 0.5;
 
         const baseLayer = new Image();
-        baseLayer.src = 'testNFTlayer2.png';
-        baseLayer.onload = () => {
-            baseLayerCanvas.width = baseLayer.width * scaleFactor;
-            baseLayerCanvas.height = baseLayer.height * scaleFactor;
-        };
+        baseLayer.src = 'base-layer.jpg';
 
         const topLayer = new Image();
-        topLayer.src = 'testNFTlayer1.png';
-        topLayer.onload = () => {
-            scratchCanvas.width = topLayer.width * scaleFactor;
-            scratchCanvas.height = topLayer.height * scaleFactor;
-            scratchCtx.drawImage(topLayer, 0, 0, scratchCanvas.width, scratchCanvas.height);
-            scratchCtx.globalCompositeOperation = 'destination-out';
-            baseLayerCanvas.style.opacity = 0;
-            baseLayerCtx.drawImage(baseLayer, 0, 0, baseLayerCanvas.width, baseLayerCanvas.height); // Move this line here
-        };
+        topLayer.src = 'top-layer.jpg';
 
-
+        Promise.all([
+            new Promise((resolve) => {
+                baseLayer.onload = () => {
+                    baseLayerCanvas.width = baseLayer.width * scaleFactor;
+                    baseLayerCanvas.height = baseLayer.height * scaleFactor;
+                    resolve();
+                };
+            }),
+            new Promise((resolve) => {
+                topLayer.onload = () => {
+                    scratchCanvas.width = topLayer.width * scaleFactor;
+                    scratchCanvas.height = topLayer.height * scaleFactor;
+                    scratchCtx.drawImage(topLayer, 0, 0, scratchCanvas.width, scratchCanvas.height);
+                    scratchCtx.globalCompositeOperation = 'destination-out';
+                    baseLayerCanvas.style.opacity = 0;
+                    resolve();
+                };
+            })
+        ]).then(() => {
+            baseLayerCtx.drawImage(baseLayer, 0, 0, baseLayerCanvas.width, baseLayerCanvas.height);
+        });
 
    
         function updateOpacity() {

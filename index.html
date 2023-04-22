@@ -33,80 +33,24 @@
         const scratchCtx = scratchCanvas.getContext('2d');
 
         let isDrawing = false;
+        const scaleFactor = 0.5; // Add this line to control scaling
 
         const baseLayer = new Image();
         baseLayer.src = 'testNFTlayer2.png';
         baseLayer.onload = () => {
-            baseLayerCanvas.width = baseLayer.width;
-            baseLayerCanvas.height = baseLayer.height;
+            baseLayerCanvas.width = baseLayer.width * scaleFactor;
+            baseLayerCanvas.height = baseLayer.height * scaleFactor;
             baseLayerCtx.drawImage(baseLayer, 0, 0, baseLayerCanvas.width, baseLayerCanvas.height);
 
             const topLayer = new Image();
             topLayer.src = 'testNFTlayer1.png';
             topLayer.onload = () => {
-                scratchCanvas.width = topLayer.width;
-                scratchCanvas.height = topLayer.height;
+                scratchCanvas.width = topLayer.width * scaleFactor;
+                scratchCanvas.height = topLayer.height * scaleFactor;
                 scratchCtx.drawImage(topLayer, 0, 0, scratchCanvas.width, scratchCanvas.height);
                 scratchCtx.globalCompositeOperation = 'destination-out';
             };
         };
 
-        function updateOpacity() {
-            const totalPixels = scratchCanvas.width * scratchCanvas.height;
-            const imageData = scratchCtx.getImageData(0, 0, scratchCanvas.width, scratchCanvas.height);
-            const pixels = imageData.data;
-            let transparentPixels = 0;
+        // Rest of the code remains the same
 
-            for (let i = 0; i < pixels.length; i += 4) {
-                if (pixels[i + 3] === 0) {
-                    transparentPixels++;
-                }
-            }
-
-            const opacity = transparentPixels / totalPixels;
-            baseLayerCanvas.style.opacity = 1 - opacity;
-        }
-
-        function scratch(x, y) {
-            scratchCtx.beginPath();
-            scratchCtx.arc(x, y, 30, 0, Math.PI * 2);
-            scratchCtx.fill();
-            updateOpacity();
-        }
-
-        scratchCanvas.addEventListener('mousedown', () => {
-            isDrawing = true;
-        });
-
-        scratchCanvas.addEventListener('mouseup', () => {
-            isDrawing = false;
-        });
-
-        scratchCanvas.addEventListener('mousemove', (e) => {
-            if (!isDrawing) return;
-            const rect = scratchCanvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            scratch(x, y);
-        });
-
-        scratchCanvas.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            isDrawing = true;
-        });
-
-        scratchCanvas.addEventListener('touchend', () => {
-            isDrawing = false;
-        });
-
-        scratchCanvas.addEventListener('touchmove', (e) => {
-            if (!isDrawing) return;
-            const rect = scratchCanvas.getBoundingClientRect();
-            const x = e.touches[0].clientX - rect.left;
-            const y = e.touches[0].clientY - rect.top;
-            scratch(x, y);
-        });
-        
-</script>
-</body>
-</html>

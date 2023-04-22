@@ -36,14 +36,14 @@
         const scaleFactor = 0.5;
 
         const baseLayer = new Image();
-        baseLayer.src = 'base-layer.jpg';
+        baseLayer.src = 'testNFTlayer2.png';
         baseLayer.onload = () => {
             baseLayerCanvas.width = baseLayer.width * scaleFactor;
             baseLayerCanvas.height = baseLayer.height * scaleFactor;
         };
 
         const topLayer = new Image();
-        topLayer.src = 'top-layer.jpg';
+        topLayer.src = 'testNFTlayer1.png';
         topLayer.onload = () => {
             scratchCanvas.width = topLayer.width * scaleFactor;
             scratchCanvas.height = topLayer.height * scaleFactor;

@@ -63,28 +63,11 @@
             baseLayerCtx.drawImage(baseLayer, 0, 0, baseLayerCanvas.width, baseLayerCanvas.height);
         });
 
-   
-        function updateOpacity() {
-            const totalPixels = scratchCanvas.width * scratchCanvas.height;
-            const imageData = scratchCtx.getImageData(0, 0, scratchCanvas.width, scratchCanvas.height);
-            const pixels = imageData.data;
-            let transparentPixels = 0;
-
-            for (let i = 0; i < pixels.length; i += 4) {
-                if (pixels[i + 3] === 0) {
-                    transparentPixels++;
-                }
-            }
-
-            const opacity = transparentPixels / totalPixels;
-            baseLayerCanvas.style.opacity = 1 - opacity;
-        }
 
         function scratch(x, y) {
             scratchCtx.beginPath();
             scratchCtx.arc(x, y, 30, 0, Math.PI * 2);
             scratchCtx.fill();
-            updateOpacity();
         }
 
         scratchCanvas.addEventListener('mousedown', () => {
